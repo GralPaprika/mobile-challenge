@@ -1,8 +1,14 @@
 package com.example.mobilechallenge.di
 
 import com.example.mobilechallenge.data.remote.ApiService
-import com.example.mobilechallenge.data.repository.HomeRepository
 import com.example.mobilechallenge.data.repository.HomeRepositoryImpl
+import com.example.mobilechallenge.domain.repository.HomeRepository
+import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
+import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCaseImpl
+import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
+import com.example.mobilechallenge.domain.usecase.GetPhotosUseCaseImpl
+import com.example.mobilechallenge.domain.usecase.LoadHomeScreenUseCase
+import com.example.mobilechallenge.domain.usecase.LoadHomeScreenUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,5 +59,30 @@ object RepositoryModule {
     @Singleton
     fun provideHomeRepository(apiService: ApiService): HomeRepository {
         return HomeRepositoryImpl(apiService)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UseCaseModule {
+    @Provides
+    @Singleton
+    fun provideGetAlbumsUseCase(repository: HomeRepository): GetAlbumsUseCase {
+        return GetAlbumsUseCaseImpl(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetPhotosUseCase(repository: HomeRepository): GetPhotosUseCase {
+        return GetPhotosUseCaseImpl(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoadHomeScreenUseCase(
+        getAlbumsUseCase: GetAlbumsUseCase,
+        getPhotosUseCase: GetPhotosUseCase
+    ): LoadHomeScreenUseCase {
+        return LoadHomeScreenUseCaseImpl(getAlbumsUseCase, getPhotosUseCase)
     }
 }
