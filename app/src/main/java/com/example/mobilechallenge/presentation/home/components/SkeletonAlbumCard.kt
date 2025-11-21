@@ -27,7 +27,7 @@ fun SkeletonAlbumCard(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.6f)
-                .height(20.dp)
+                .height(26.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .shimmerBackground()
         )

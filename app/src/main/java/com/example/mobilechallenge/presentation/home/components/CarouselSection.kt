@@ -22,6 +22,12 @@ import com.example.mobilechallenge.ui.theme.Accent
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+// Load more carousel photos when within 2 items of end
+private const val CAROUSEL_SCROLL_TRIGGER = 2
+
+// Show 2 skeleton cards during carousel pagination
+private const val SKELETON_CAROUSEL_PAGINATION_COUNT = 2
+
 @Composable
 fun CarouselSection(
     modifier: Modifier = Modifier,
@@ -37,13 +43,12 @@ fun CarouselSection(
     LaunchedEffect(listState, isLoadingMorePhotos, photos.size) {
         snapshotFlow {
             val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-            val totalItems = photos.size + if (isLoadingMorePhotos) 2 else 0  // Account for skeleton items
+            val totalItems = photos.size + if (isLoadingMorePhotos) SKELETON_CAROUSEL_PAGINATION_COUNT else 0 // Account for skeleton items
             lastVisibleIndex to totalItems
         }
             .distinctUntilChanged()
             .collect { (lastVisibleIndex, totalItems) ->
-                // Trigger load when within 2 items of the end
-                if (lastVisibleIndex >= totalItems - 2 && totalItems > 0 && !isLoadingMorePhotos) {
+                if (lastVisibleIndex >= totalItems - CAROUSEL_SCROLL_TRIGGER && totalItems > 0 && !isLoadingMorePhotos) {
                     onLoadMorePhotos()
                 }
             }
@@ -58,7 +63,7 @@ fun CarouselSection(
         Text(
             text = title,
             color = Accent,
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp),
         )
@@ -74,10 +79,7 @@ fun CarouselSection(
             
             // Show skeleton cards while loading
             if (isLoadingMorePhotos) {
-                // If no photos yet (initial load), show 3 skeleton cards
-                // If photos exist (pagination), show 2 skeleton cards
-                val skeletonCount = if (photos.isEmpty()) 3 else 2
-                items(skeletonCount) {
+                items(SKELETON_CAROUSEL_PAGINATION_COUNT) {
                     SkeletonPhotoCard()
                 }
             }

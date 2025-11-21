@@ -16,8 +16,8 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 fun SkeletonPhotoCard(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .width(140.dp)
-            .height(140.dp)
+            .width(180.dp)
+            .height(180.dp)
             .padding(end = 12.dp)
             .clip(RoundedCornerShape(12.dp))
             .shimmerBackground()

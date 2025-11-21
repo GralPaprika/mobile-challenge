@@ -19,6 +19,8 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Primary
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+private const val ALBUM_SCROLL_TRIGGER = 3  // Load more albums when within 3 items of end
+
 @Composable
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
@@ -41,7 +43,7 @@ fun HomeScreenContent(
         }
             .distinctUntilChanged()
             .collect { (lastVisibleIndex, totalItems) ->
-                if (lastVisibleIndex >= totalItems - 3 && !isLoadingMore && totalItems > 0 && hasMoreData) {
+                if (lastVisibleIndex >= totalItems - ALBUM_SCROLL_TRIGGER && !isLoadingMore && totalItems > 0 && hasMoreData) {
                     onLoadMoreRequested()
                 }
             }
