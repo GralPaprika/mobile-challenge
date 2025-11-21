@@ -1,7 +1,7 @@
 package com.example.mobilechallenge.domain.usecase
 
 import app.cash.turbine.test
-import com.example.mobilechallenge.data.model.Photo
+import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
@@ -24,17 +24,18 @@ class GetPhotosUseCaseTest {
     }
 
     @Test
-    fun `invoke returns success result with photos`() = runTest {
+    fun `invoke returns success result with photos for album`() = runTest {
+        val albumId = 1
         val testPhotos = listOf(
-            Photo(id = 1, albumId = 1, title = "Photo 1", url = "url1", thumbnailUrl = "thumb1"),
-            Photo(id = 2, albumId = 1, title = "Photo 2", url = "url2", thumbnailUrl = "thumb2")
+            Photo(id = 1, albumId = albumId, title = "Photo 1", url = "url1", thumbnailUrl = "thumb1"),
+            Photo(id = 2, albumId = albumId, title = "Photo 2", url = "url2", thumbnailUrl = "thumb2")
         )
 
-        whenever(repository.getPhotos()).thenReturn(flow {
+        whenever(repository.getPhotosByAlbumId(albumId)).thenReturn(flow {
             emit(Result.success(testPhotos))
         })
 
-        useCase.invoke().test {
+        useCase.invoke(albumId).test {
             val result = awaitItem()
             assertTrue(result.isSuccess)
             assertEquals(testPhotos, result.getOrNull())
@@ -44,13 +45,14 @@ class GetPhotosUseCaseTest {
 
     @Test
     fun `invoke returns failure result on exception`() = runTest {
+        val albumId = 1
         val testException = Exception("Failed to fetch photos")
 
-        whenever(repository.getPhotos()).thenReturn(flow {
+        whenever(repository.getPhotosByAlbumId(albumId)).thenReturn(flow {
             emit(Result.failure(testException))
         })
 
-        useCase.invoke().test {
+        useCase.invoke(albumId).test {
             val result = awaitItem()
             assertTrue(result.isFailure)
             assertEquals("Failed to fetch photos", result.exceptionOrNull()?.message)

@@ -3,7 +3,7 @@ package com.example.mobilechallenge.presentation.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mobilechallenge.data.model.Photo
+import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.components.ErrorScreen
 import com.example.mobilechallenge.presentation.home.components.LoadingScreen
 import com.example.mobilechallenge.presentation.home.components.HomeScreenContent
@@ -20,8 +20,7 @@ fun HomeScreen(
         uiState.isLoading -> LoadingScreen()
         uiState.error != null -> ErrorScreen(uiState.error)
         else -> HomeScreenContent(
-            albums = uiState.albums,
-            photos = uiState.photos,
+            albumsWithPhotos = uiState.albumsWithPhotos,
             onPhotoClick = onPhotoClick,
         )
     }

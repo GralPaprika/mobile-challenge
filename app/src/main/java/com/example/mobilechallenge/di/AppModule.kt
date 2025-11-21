@@ -7,8 +7,6 @@ import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCaseImpl
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCaseImpl
-import com.example.mobilechallenge.domain.usecase.LoadHomeScreenUseCase
-import com.example.mobilechallenge.domain.usecase.LoadHomeScreenUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -75,14 +73,5 @@ object UseCaseModule {
     @Singleton
     fun provideGetPhotosUseCase(repository: HomeRepository): GetPhotosUseCase {
         return GetPhotosUseCaseImpl(repository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLoadHomeScreenUseCase(
-        getAlbumsUseCase: GetAlbumsUseCase,
-        getPhotosUseCase: GetPhotosUseCase
-    ): LoadHomeScreenUseCase {
-        return LoadHomeScreenUseCaseImpl(getAlbumsUseCase, getPhotosUseCase)
     }
 }

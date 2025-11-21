@@ -2,7 +2,7 @@ package com.example.mobilechallenge.presentation.home.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.example.mobilechallenge.data.model.Photo
+import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import org.junit.Rule
 import org.junit.Test

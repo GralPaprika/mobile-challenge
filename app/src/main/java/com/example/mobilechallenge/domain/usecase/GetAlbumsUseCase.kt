@@ -1,6 +1,6 @@
 package com.example.mobilechallenge.domain.usecase
 
-import com.example.mobilechallenge.data.model.Album
+import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 

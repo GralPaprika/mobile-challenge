@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mobilechallenge.data.model.Photo
+import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Secondary
 import com.example.mobilechallenge.ui.theme.Accent
