@@ -3,6 +3,8 @@ package com.example.mobilechallenge.presentation.home.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,9 +17,10 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 fun SkeletonPhotoCard(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .width(140.dp)
+            .height(140.dp)
+            .padding(end = 12.dp)
+            .clip(RoundedCornerShape(12.dp))
             .shimmerBackground()
     )
 }

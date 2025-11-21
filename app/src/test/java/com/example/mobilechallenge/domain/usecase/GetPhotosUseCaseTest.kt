@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -31,9 +31,13 @@ class GetPhotosUseCaseTest {
             Photo(id = 2, albumId = albumId, title = "Photo 2", url = "url2", thumbnailUrl = "thumb2")
         )
 
-        whenever(repository.getPhotosByAlbumId(albumId)).thenReturn(flow {
-            emit(Result.success(testPhotos))
-        })
+        // Mock with flexible parameter matching
+        repository = mock {
+            onGeneric { getPhotosByAlbumId(any(), any(), any()) }.thenAnswer {
+                flow<Result<List<Photo>>> { emit(Result.success(testPhotos)) }
+            }
+        }
+        useCase = GetPhotosUseCaseImpl(repository)
 
         useCase.invoke(albumId).test {
             val result = awaitItem()
@@ -44,13 +48,40 @@ class GetPhotosUseCaseTest {
     }
 
     @Test
+    fun `invoke with pagination parameters returns paginated results`() = runTest {
+        val albumId = 1
+        val limit = 10
+        val start = 0
+        val testPhotos = (1..10).map { 
+            Photo(id = it, albumId = albumId, title = "Photo $it", url = "url$it", thumbnailUrl = "thumb$it")
+        }
+
+        repository = mock {
+            onGeneric { getPhotosByAlbumId(any(), any(), any()) }.thenAnswer {
+                flow { emit(Result.success(testPhotos)) }
+            }
+        }
+        useCase = GetPhotosUseCaseImpl(repository)
+
+        useCase.invoke(albumId, limit, start).test {
+            val result = awaitItem()
+            assertTrue(result.isSuccess)
+            assertEquals(10, result.getOrNull()?.size)
+            awaitComplete()
+        }
+    }
+
+    @Test
     fun `invoke returns failure result on exception`() = runTest {
         val albumId = 1
         val testException = Exception("Failed to fetch photos")
 
-        whenever(repository.getPhotosByAlbumId(albumId)).thenReturn(flow {
-            emit(Result.failure(testException))
-        })
+        repository = mock {
+            onGeneric { getPhotosByAlbumId(any(), any(), any()) }.thenAnswer {
+                flow<Result<List<Photo>>> { emit(Result.failure(testException)) }
+            }
+        }
+        useCase = GetPhotosUseCaseImpl(repository)
 
         useCase.invoke(albumId).test {
             val result = awaitItem()
@@ -60,3 +91,4 @@ class GetPhotosUseCaseTest {
         }
     }
 }
+

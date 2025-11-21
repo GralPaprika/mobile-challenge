@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
     fun getAlbums(limit: Int = 5, start: Int = 0): Flow<Result<List<Album>>>
-    fun getPhotosByAlbumId(albumId: Int): Flow<Result<List<Photo>>>
+    fun getPhotosByAlbumId(albumId: Int, limit: Int = 10, start: Int = 0): Flow<Result<List<Photo>>>
 }

@@ -19,9 +19,9 @@ class HomeRepositoryImpl(private val apiService: ApiService) : HomeRepository {
         }
     }
 
-    override fun getPhotosByAlbumId(albumId: Int): Flow<Result<List<Photo>>> = flow {
+    override fun getPhotosByAlbumId(albumId: Int, limit: Int, start: Int): Flow<Result<List<Photo>>> = flow {
         try {
-            val dtos = apiService.getPhotosByAlbumId(albumId)
+            val dtos = apiService.getPhotosByAlbumId(albumId, limit, start)
             val photos = DataMapper.photoDtosToDomain(dtos)
             emit(Result.success(photos))
         } catch (e: Exception) {

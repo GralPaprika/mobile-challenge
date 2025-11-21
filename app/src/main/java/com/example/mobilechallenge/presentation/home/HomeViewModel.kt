@@ -31,8 +31,16 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     private val photoCache = mutableMapOf<Int, List<Photo>>()
+    private val photoPaginationState = mutableMapOf<Int, PhotoPaginationState>()
     private var currentPage = 0
     private val pageSize = 5
+    private val photoPageSize = 10
+
+    data class PhotoPaginationState(
+        var currentPage: Int = 0,
+        var hasMorePhotos: Boolean = true,
+        var isLoadingMorePhotos: Boolean = false
+    )
 
     init {
         loadInitialData()
@@ -99,34 +107,61 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadPhotosForAlbum(albumId: Int) {
-        if (photoCache.containsKey(albumId)) return
+        val paginationState = photoPaginationState.getOrPut(albumId) { PhotoPaginationState() }
+        
+        // Prevent loading if already loading or if we've reached the end
+        if (paginationState.isLoadingMorePhotos || !paginationState.hasMorePhotos) return
 
         viewModelScope.launch {
+            paginationState.isLoadingMorePhotos = true
+            
+            // Add to loading IDs to show loading state in carousel
             val currentLoadingIds = _uiState.value.loadingPhotoIds
             _uiState.value = _uiState.value.copy(loadingPhotoIds = currentLoadingIds + albumId)
 
             try {
-                getPhotosUseCase.invoke(albumId).collect { result ->
-                    val photos = result.getOrNull() ?: emptyList()
-                    photoCache[albumId] = photos
+                val start = paginationState.currentPage * photoPageSize
+                getPhotosUseCase.invoke(albumId, photoPageSize, start).collect { result ->
+                    val newPhotos = result.getOrNull() ?: emptyList()
+                    
+                    // Check if this is the last page
+                    val isLastPage = newPhotos.size < photoPageSize
+                    paginationState.hasMorePhotos = !isLastPage
+                    
+                    if (newPhotos.isNotEmpty()) {
+                        // Append new photos to existing cache
+                        val currentPhotos = photoCache.getOrDefault(albumId, emptyList())
+                        val allPhotos = currentPhotos + newPhotos
+                        photoCache[albumId] = allPhotos
 
-                    val updatedAlbums = _uiState.value.albumsWithPhotos.map { albumWithPhotos ->
-                        if (albumWithPhotos.album.id == albumId) {
-                            albumWithPhotos.copy(photos = photos)
-                        } else {
-                            albumWithPhotos
+                        val updatedAlbums = _uiState.value.albumsWithPhotos.map { albumWithPhotos ->
+                            if (albumWithPhotos.album.id == albumId) {
+                                albumWithPhotos.copy(photos = allPhotos)
+                            } else {
+                                albumWithPhotos
+                            }
                         }
-                    }
 
-                    val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
-                    _uiState.value = _uiState.value.copy(
-                        albumsWithPhotos = updatedAlbums,
-                        loadingPhotoIds = updatedLoadingIds
-                    )
+                        val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
+                        _uiState.value = _uiState.value.copy(
+                            albumsWithPhotos = updatedAlbums,
+                            loadingPhotoIds = updatedLoadingIds
+                        )
+                        
+                        if (!isLastPage) {
+                            paginationState.currentPage++
+                        }
+                    } else {
+                        val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
+                        _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
+                    }
+                    
+                    paginationState.isLoadingMorePhotos = false
                 }
             } catch (e: Exception) {
                 val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
                 _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
+                paginationState.isLoadingMorePhotos = false
             }
         }
     }

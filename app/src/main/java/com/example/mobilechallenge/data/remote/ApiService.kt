@@ -14,5 +14,9 @@ interface ApiService {
     ): List<AlbumDto>
 
     @GET("/albums/{albumId}/photos")
-    suspend fun getPhotosByAlbumId(@Path("albumId") albumId: Int): List<PhotoDto>
+    suspend fun getPhotosByAlbumId(
+        @Path("albumId") albumId: Int,
+        @Query("_limit") limit: Int = 10,
+        @Query("_start") start: Int = 0
+    ): List<PhotoDto>
 }

@@ -5,9 +5,10 @@ import com.example.mobilechallenge.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 
 interface GetPhotosUseCase {
-    operator fun invoke(albumId: Int): Flow<Result<List<Photo>>>
+    operator fun invoke(albumId: Int, limit: Int = 10, start: Int = 0): Flow<Result<List<Photo>>>
 }
 
 class GetPhotosUseCaseImpl(private val repository: HomeRepository) : GetPhotosUseCase {
-    override fun invoke(albumId: Int): Flow<Result<List<Photo>>> = repository.getPhotosByAlbumId(albumId)
+    override fun invoke(albumId: Int, limit: Int, start: Int): Flow<Result<List<Photo>>> = 
+        repository.getPhotosByAlbumId(albumId, limit, start)
 }

@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -17,14 +20,36 @@ import androidx.compose.ui.unit.sp
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Accent
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun CarouselSection(
+    modifier: Modifier = Modifier,
     title: String,
     photos: List<Photo>,
     onPhotoClick: (Photo) -> Unit,
-    modifier: Modifier = Modifier
+    onLoadMorePhotos: () -> Unit = {},
+    isLoadingMorePhotos: Boolean = false,
 ) {
+    val listState = rememberLazyListState()
+
+    // Detect when user scrolls near the end of carousel
+    LaunchedEffect(listState, isLoadingMorePhotos, photos.size) {
+        snapshotFlow {
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val totalItems = photos.size + if (isLoadingMorePhotos) 2 else 0  // Account for skeleton items
+            lastVisibleIndex to totalItems
+        }
+            .distinctUntilChanged()
+            .collect { (lastVisibleIndex, totalItems) ->
+                // Trigger load when within 2 items of the end
+                if (lastVisibleIndex >= totalItems - 2 && totalItems > 0 && !isLoadingMorePhotos) {
+                    onLoadMorePhotos()
+                }
+            }
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -42,9 +67,20 @@ fun CarouselSection(
         LazyRow(
             contentPadding = PaddingValues(horizontal = 0.dp),
             modifier = Modifier.fillMaxWidth(),
+            state = listState
         ) {
             items(photos) { photo ->
                 PhotoCard(photo = photo, onPhotoClick = onPhotoClick)
+            }
+            
+            // Show skeleton cards while loading
+            if (isLoadingMorePhotos) {
+                // If no photos yet (initial load), show 3 skeleton cards
+                // If photos exist (pagination), show 2 skeleton cards
+                val skeletonCount = if (photos.isEmpty()) 3 else 2
+                items(skeletonCount) {
+                    SkeletonPhotoCard()
+                }
             }
         }
     }

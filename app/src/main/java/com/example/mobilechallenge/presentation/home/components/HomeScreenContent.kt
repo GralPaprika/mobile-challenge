@@ -32,6 +32,7 @@ fun HomeScreenContent(
     onPhotoClick: (Photo) -> Unit,
     onLoadMoreRequested: () -> Unit = {},
     onPhotoLoadRequested: (Int) -> Unit = {},
+    onLoadMorePhotosForAlbum: (Int) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
 
@@ -63,26 +64,21 @@ fun HomeScreenContent(
                 }
             }
 
-            if (loadingPhotoIds.contains(albumWithPhotos.album.id)) {
-                SkeletonAlbumCard()
-            } else {
-                CarouselSection(
-                    title = albumWithPhotos.album.title,
-                    photos = albumWithPhotos.photos.take(8),
-                    onPhotoClick = onPhotoClick
-                )
-            }
+            val isLoadingPhotosForThisAlbum = loadingPhotoIds.contains(albumWithPhotos.album.id)
+            
+            // Always show carousel with photos (or skeleton placeholders while loading)
+            CarouselSection(
+                title = albumWithPhotos.album.title,
+                photos = albumWithPhotos.photos,
+                onPhotoClick = onPhotoClick,
+                onLoadMorePhotos = { onLoadMorePhotosForAlbum(albumWithPhotos.album.id) },
+                isLoadingMorePhotos = isLoadingPhotosForThisAlbum
+            )
         }
 
         if (isLoadingMore) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                ) {
-                    SkeletonAlbumCard()
-                }
+                SkeletonAlbumCard()
             }
         }
     }

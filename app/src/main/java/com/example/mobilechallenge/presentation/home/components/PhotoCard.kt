@@ -27,9 +27,9 @@ import com.example.mobilechallenge.ui.theme.Accent
 
 @Composable
 fun PhotoCard(
+    modifier: Modifier = Modifier,
     photo: Photo,
     onPhotoClick: (Photo) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier

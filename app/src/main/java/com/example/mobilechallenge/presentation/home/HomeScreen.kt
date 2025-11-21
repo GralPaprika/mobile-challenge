@@ -27,6 +27,7 @@ fun HomeScreen(
             onPhotoClick = onPhotoClick,
             onLoadMoreRequested = { viewModel.loadNextPage() },
             onPhotoLoadRequested = { albumId -> viewModel.loadPhotosForAlbum(albumId) },
+            onLoadMorePhotosForAlbum = { albumId -> viewModel.loadPhotosForAlbum(albumId) },
         )
     }
 }
