@@ -2,6 +2,7 @@ package com.example.mobilechallenge.presentation.home.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.hasTestTag
 import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.model.AlbumWithPhotos
@@ -90,5 +91,36 @@ class HomeScreenContentTest {
 
         // Verify it renders without crashing with empty data
         composeTestRule.waitForIdle()
+    }
+
+    @Test
+    fun successScreen_showsSkeletonWhenPhotoLoading() {
+        composeTestRule.setContent {
+            MobileChallengeTheme {
+                HomeScreenContent(
+                    albumsWithPhotos = testAlbumsWithPhotos,
+                    loadingPhotoIds = setOf(1),
+                    onPhotoClick = {}
+                )
+            }
+        }
+
+        // When photo is loading, skeleton should be shown instead of carousel
+        composeTestRule.onNode(hasTestTag("skeleton_album_card")).assertExists()
+    }
+
+    @Test
+    fun successScreen_showsCarouselWhenPhotosLoaded() {
+        composeTestRule.setContent {
+            MobileChallengeTheme {
+                HomeScreenContent(
+                    albumsWithPhotos = testAlbumsWithPhotos,
+                    onPhotoClick = {}
+                )
+            }
+        }
+
+        // When photos are loaded, carousel should be shown
+        composeTestRule.onNode(hasTestTag("carousel_section")).assertExists()
     }
 }

@@ -21,7 +21,11 @@ fun HomeScreen(
         uiState.error != null -> ErrorScreen(uiState.error)
         else -> HomeScreenContent(
             albumsWithPhotos = uiState.albumsWithPhotos,
+            isLoadingMore = uiState.isLoadingMore,
+            loadingPhotoIds = uiState.loadingPhotoIds,
             onPhotoClick = onPhotoClick,
+            onLoadMoreRequested = { viewModel.loadNextPage() },
+            onPhotoLoadRequested = { albumId -> viewModel.loadPhotosForAlbum(albumId) },
         )
     }
 }
