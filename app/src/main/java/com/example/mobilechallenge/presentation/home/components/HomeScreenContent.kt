@@ -15,7 +15,7 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Primary
 
 @Composable
-fun SuccessScreen(
+fun HomeScreenContent(
     albums: List<Album>,
     photos: List<Photo>,
     onPhotoClick: (Photo) -> Unit,
@@ -41,7 +41,7 @@ fun SuccessScreen(
 @Composable
 fun SuccessScreenPreview() {
     MobileChallengeTheme {
-        SuccessScreen(
+        HomeScreenContent(
             albums = listOf(
                 Album(id = 1, userId = 1, title = "Album 1"),
                 Album(id = 2, userId = 1, title = "Album 2")

@@ -6,7 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.mobilechallenge.data.model.Photo
 import com.example.mobilechallenge.presentation.home.components.ErrorScreen
 import com.example.mobilechallenge.presentation.home.components.LoadingScreen
-import com.example.mobilechallenge.presentation.home.components.SuccessScreen
+import com.example.mobilechallenge.presentation.home.components.HomeScreenContent
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 
 @Composable
@@ -19,7 +19,7 @@ fun HomeScreen(
     when {
         uiState.isLoading -> LoadingScreen()
         uiState.error != null -> ErrorScreen(uiState.error)
-        else -> SuccessScreen(
+        else -> HomeScreenContent(
             albums = uiState.albums,
             photos = uiState.photos,
             onPhotoClick = onPhotoClick,
