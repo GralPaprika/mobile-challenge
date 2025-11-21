@@ -2,6 +2,9 @@ package com.example.mobilechallenge.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mobilechallenge.domain.constant.PaginationConstants.ALBUM_PAGE_SIZE
+import com.example.mobilechallenge.domain.constant.PaginationConstants.PAGINATION_START_INDEX
+import com.example.mobilechallenge.domain.constant.PaginationConstants.PHOTO_PAGE_SIZE
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
@@ -32,9 +35,7 @@ class HomeViewModel @Inject constructor(
 
     private val photoCache = mutableMapOf<Int, List<Photo>>()
     private val photoPaginationState = mutableMapOf<Int, PhotoPaginationState>()
-    private var currentPage = 0
-    private val pageSize = 5
-    private val photoPageSize = 10
+    private var currentPage = PAGINATION_START_INDEX
 
     data class PhotoPaginationState(
         var currentPage: Int = 0,
@@ -68,12 +69,12 @@ class HomeViewModel @Inject constructor(
             try {
                 _uiState.value = _uiState.value.copy(isLoadingMore = true)
 
-                val start = currentPage * pageSize
-                getAlbumsUseCase.invoke(pageSize, start).collect { result ->
+                val start = currentPage * ALBUM_PAGE_SIZE
+                getAlbumsUseCase.invoke(ALBUM_PAGE_SIZE, start).collect { result ->
                     val albums = result.getOrThrow()
                     
                     // Check if we've reached the end (got fewer items than page size)
-                    val isLastPage = albums.size < pageSize
+                    val isLastPage = albums.size < ALBUM_PAGE_SIZE
                     
                     if (albums.isNotEmpty()) {
                         val newAlbumsWithPhotos = albums.map { album ->
@@ -120,12 +121,12 @@ class HomeViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(loadingPhotoIds = currentLoadingIds + albumId)
 
             try {
-                val start = paginationState.currentPage * photoPageSize
-                getPhotosUseCase.invoke(albumId, photoPageSize, start).collect { result ->
+                val start = paginationState.currentPage * PHOTO_PAGE_SIZE
+                getPhotosUseCase.invoke(albumId, PHOTO_PAGE_SIZE, start).collect { result ->
                     val newPhotos = result.getOrNull() ?: emptyList()
                     
                     // Check if this is the last page
-                    val isLastPage = newPhotos.size < photoPageSize
+                    val isLastPage = newPhotos.size < PHOTO_PAGE_SIZE
                     paginationState.hasMorePhotos = !isLastPage
                     
                     if (newPhotos.isNotEmpty()) {
