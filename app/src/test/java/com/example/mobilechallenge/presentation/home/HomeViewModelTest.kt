@@ -127,7 +127,7 @@ class HomeViewModelTest {
             assertTrue(firstState.hasMoreData) // Full page, more data may exist
 
             // Trigger async request for second page
-            viewModel.loadNextPage()
+            viewModel.loadAlbumsNextPage()
 
             // Skip "isLoadingMore=true" emission (intermediate loading state)
             skipItems(1)
@@ -140,7 +140,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `loadNextPage appends new albums correctly`() = runTest {
+    fun `loadAlbumsNextPage appends new albums correctly`() = runTest {
         val firstPageAlbums = (1..5).map { Album(id = it, userId = 1, title = "Album $it") }
         val secondPageAlbums = (6..10).map { Album(id = it, userId = 1, title = "Album $it") }
 
@@ -167,7 +167,7 @@ class HomeViewModelTest {
             assertEquals("Album 1", firstState.albumsWithPhotos.first().album.title)
 
             // Trigger async request for second page
-            viewModel.loadNextPage()
+            viewModel.loadAlbumsNextPage()
 
             // Skip "isLoadingMore=true" emission (intermediate loading state)
             skipItems(1)

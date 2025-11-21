@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 currentPage = 0
-                loadNextPage()
+                loadAlbumsNextPage()
             } catch (e: Exception) {
                 _uiState.value = HomeUiState(
                     isLoading = false,
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadNextPage() {
+    fun loadAlbumsNextPage() {
         if (_uiState.value.isLoadingMore || !_uiState.value.hasMoreData) return
 
         viewModelScope.launch {
