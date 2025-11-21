@@ -4,9 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobilechallenge.presentation.home.HomeScreen
-import com.example.mobilechallenge.presentation.home.HomeViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.mobilechallenge.presentation.navigation.AppNavHost
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,13 +16,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MobileChallengeTheme {
-                val homeViewModel: HomeViewModel = viewModel()
-                HomeScreen(
-                    viewModel = homeViewModel,
-                    onPhotoClick = { photo ->
-                        // TODO: Navigate to detail screen
-                    }
-                )
+                val navController = rememberNavController()
+                AppNavHost(navController = navController)
             }
         }
     }
