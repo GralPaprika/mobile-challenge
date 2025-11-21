@@ -11,19 +11,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import androidx.compose.runtime.snapshotFlow
 import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.model.AlbumWithPhotos
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Primary
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun HomeScreenContent(

@@ -2,7 +2,6 @@ package com.example.mobilechallenge.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
