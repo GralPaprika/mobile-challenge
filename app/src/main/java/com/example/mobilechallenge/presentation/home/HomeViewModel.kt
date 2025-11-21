@@ -115,55 +115,56 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch {
             paginationState.isLoadingMorePhotos = true
-            
-            // Add to loading IDs to show loading state in carousel
-            val currentLoadingIds = _uiState.value.loadingPhotoIds
-            _uiState.value = _uiState.value.copy(loadingPhotoIds = currentLoadingIds + albumId)
+            updateLoadingPhotoIds(albumId, isLoading = true)
 
             try {
                 val start = paginationState.currentPage * PHOTO_PAGE_SIZE
                 getPhotosUseCase.invoke(albumId, PHOTO_PAGE_SIZE, start).collect { result ->
                     val newPhotos = result.getOrNull() ?: emptyList()
-                    
-                    // Check if this is the last page
                     val isLastPage = newPhotos.size < PHOTO_PAGE_SIZE
-                    paginationState.hasMorePhotos = !isLastPage
                     
                     if (newPhotos.isNotEmpty()) {
-                        // Append new photos to existing cache
-                        val currentPhotos = photoCache.getOrDefault(albumId, emptyList())
-                        val allPhotos = currentPhotos + newPhotos
-                        photoCache[albumId] = allPhotos
-
-                        val updatedAlbums = _uiState.value.albumsWithPhotos.map { albumWithPhotos ->
-                            if (albumWithPhotos.album.id == albumId) {
-                                albumWithPhotos.copy(photos = allPhotos)
-                            } else {
-                                albumWithPhotos
-                            }
-                        }
-
-                        val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
-                        _uiState.value = _uiState.value.copy(
-                            albumsWithPhotos = updatedAlbums,
-                            loadingPhotoIds = updatedLoadingIds
-                        )
-                        
+                        updatePhotosForAlbum(albumId, newPhotos)
                         if (!isLastPage) {
                             paginationState.currentPage++
                         }
-                    } else {
-                        val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
-                        _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
                     }
                     
+                    paginationState.hasMorePhotos = !isLastPage
                     paginationState.isLoadingMorePhotos = false
+                    updateLoadingPhotoIds(albumId, isLoading = false)
                 }
             } catch (e: Exception) {
-                val updatedLoadingIds = _uiState.value.loadingPhotoIds - albumId
-                _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
                 paginationState.isLoadingMorePhotos = false
+                updateLoadingPhotoIds(albumId, isLoading = false)
             }
         }
+    }
+
+    private fun updatePhotosForAlbum(albumId: Int, newPhotos: List<Photo>) {
+        // Append new photos to existing cache
+        val currentPhotos = photoCache.getOrDefault(albumId, emptyList())
+        val allPhotos = currentPhotos + newPhotos
+        photoCache[albumId] = allPhotos
+
+        // Update album's photos in UI state
+        val updatedAlbums = _uiState.value.albumsWithPhotos.map { albumWithPhotos ->
+            if (albumWithPhotos.album.id == albumId) {
+                albumWithPhotos.copy(photos = allPhotos)
+            } else {
+                albumWithPhotos
+            }
+        }
+
+        _uiState.value = _uiState.value.copy(albumsWithPhotos = updatedAlbums)
+    }
+
+    private fun updateLoadingPhotoIds(albumId: Int, isLoading: Boolean) {
+        val updatedLoadingIds = if (isLoading) {
+            _uiState.value.loadingPhotoIds + albumId
+        } else {
+            _uiState.value.loadingPhotoIds - albumId
+        }
+        _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
     }
 }
