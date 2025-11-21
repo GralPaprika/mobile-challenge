@@ -19,7 +19,8 @@ data class HomeUiState(
     val albumsWithPhotos: List<AlbumWithPhotos> = emptyList(),
     val isLoadingMore: Boolean = false,
     val loadingPhotoIds: Set<Int> = emptySet(),
-    val error: String? = null
+    val error: String? = null,
+    val hasMoreData: Boolean = true
 )
 
 @HiltViewModel
@@ -30,7 +31,6 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private var allAlbums = emptyList<Album>()
     private val photoCache = mutableMapOf<Int, List<Photo>>()
     private var currentPage = 0
     private val pageSize = 5
@@ -42,14 +42,6 @@ class HomeViewModel @Inject constructor(
     private fun loadInitialData() {
         viewModelScope.launch {
             try {
-                allAlbums = getAlbumsUseCase.invoke().let { flow ->
-                    var result = emptyList<Album>()
-                    flow.collect { resultWrapper ->
-                        result = resultWrapper.getOrThrow()
-                    }
-                    result
-                }
-
                 currentPage = 0
                 loadNextPage()
             } catch (e: Exception) {
@@ -63,37 +55,47 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadNextPage() {
-        if (_uiState.value.isLoadingMore || allAlbums.isEmpty()) return
+        if (_uiState.value.isLoadingMore || !_uiState.value.hasMoreData) return
 
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoadingMore = currentPage == 0)
+            try {
+                _uiState.value = _uiState.value.copy(isLoadingMore = true)
 
-            val startIndex = currentPage * pageSize
-            val endIndex = minOf(startIndex + pageSize, allAlbums.size)
+                val start = currentPage * pageSize
+                getAlbumsUseCase.invoke(pageSize, start).collect { result ->
+                    val albums = result.getOrThrow()
+                    
+                    // Check if we've reached the end (got fewer items than page size)
+                    val isLastPage = albums.size < pageSize
+                    
+                    if (albums.isNotEmpty()) {
+                        val newAlbumsWithPhotos = albums.map { album ->
+                            val photos = photoCache.getOrElse(album.id) { emptyList() }
+                            AlbumWithPhotos(album = album, photos = photos)
+                        }
 
-            if (startIndex >= allAlbums.size) return@launch
-
-            val albumsPage = allAlbums.subList(startIndex, endIndex)
-            val newAlbumsWithPhotos = mutableListOf<AlbumWithPhotos>()
-
-            for (album in albumsPage) {
-                val photos = photoCache.getOrElse(album.id) {
-                    emptyList<Photo>()
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            albumsWithPhotos = _uiState.value.albumsWithPhotos + newAlbumsWithPhotos,
+                            isLoadingMore = false,
+                            hasMoreData = !isLastPage
+                        )
+                        if (!isLastPage) {
+                            currentPage++
+                        }
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isLoadingMore = false,
+                            hasMoreData = false
+                        )
+                    }
                 }
-                newAlbumsWithPhotos.add(
-                    AlbumWithPhotos(album = album, photos = photos)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoadingMore = false,
+                    error = e.message
                 )
             }
-
-            val updatedList = _uiState.value.albumsWithPhotos + newAlbumsWithPhotos
-            _uiState.value = HomeUiState(
-                isLoading = false,
-                albumsWithPhotos = updatedList,
-                isLoadingMore = false,
-                error = null
-            )
-
-            currentPage++
         }
     }
 

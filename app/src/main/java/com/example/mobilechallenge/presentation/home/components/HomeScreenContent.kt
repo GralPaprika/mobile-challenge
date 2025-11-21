@@ -16,6 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import androidx.compose.runtime.snapshotFlow
 import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.model.AlbumWithPhotos
@@ -28,23 +31,25 @@ fun HomeScreenContent(
     albumsWithPhotos: List<AlbumWithPhotos>,
     isLoadingMore: Boolean = false,
     loadingPhotoIds: Set<Int> = emptySet(),
+    hasMoreData: Boolean = true,
     onPhotoClick: (Photo) -> Unit,
     onLoadMoreRequested: () -> Unit = {},
     onPhotoLoadRequested: (Int) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
-    val isNearBottom = remember {
-        derivedStateOf {
-            val totalItems = albumsWithPhotos.size
-            val visibleItems = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            visibleItems >= totalItems - 2
-        }
-    }
 
-    LaunchedEffect(isNearBottom.value) {
-        if (isNearBottom.value && !isLoadingMore && albumsWithPhotos.isNotEmpty()) {
-            onLoadMoreRequested()
+    LaunchedEffect(listState, isLoadingMore, hasMoreData) {
+        snapshotFlow { 
+            val totalItems = albumsWithPhotos.size
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            lastVisibleIndex to totalItems
         }
+            .distinctUntilChanged()
+            .collect { (lastVisibleIndex, totalItems) ->
+                if (lastVisibleIndex >= totalItems - 3 && !isLoadingMore && totalItems > 0 && hasMoreData) {
+                    onLoadMoreRequested()
+                }
+            }
     }
 
     LazyColumn(

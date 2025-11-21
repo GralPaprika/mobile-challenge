@@ -5,6 +5,6 @@ import com.example.mobilechallenge.domain.model.Photo
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
-    fun getAlbums(): Flow<Result<List<Album>>>
+    fun getAlbums(limit: Int = 5, start: Int = 0): Flow<Result<List<Album>>>
     fun getPhotosByAlbumId(albumId: Int): Flow<Result<List<Photo>>>
 }

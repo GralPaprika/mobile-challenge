@@ -4,10 +4,14 @@ import com.example.mobilechallenge.data.dto.AlbumDto
 import com.example.mobilechallenge.data.dto.PhotoDto
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @GET("/albums")
-    suspend fun getAlbums(): List<AlbumDto>
+    suspend fun getAlbums(
+        @Query("_limit") limit: Int = 5,
+        @Query("_start") start: Int = 0
+    ): List<AlbumDto>
 
     @GET("/albums/{albumId}/photos")
     suspend fun getPhotosByAlbumId(@Path("albumId") albumId: Int): List<PhotoDto>

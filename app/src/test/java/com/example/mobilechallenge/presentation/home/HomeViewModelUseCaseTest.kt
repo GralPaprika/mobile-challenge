@@ -11,6 +11,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
@@ -35,7 +37,7 @@ class HomeViewModelUseCaseTest {
 
     @Test
     fun `initial state is loading`() = runTest {
-        whenever(getAlbumsUseCase.invoke()).thenReturn(flow {})
+        whenever(getAlbumsUseCase.invoke(eq(5), eq(0))).thenReturn(flow {})
 
         viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
 
@@ -55,7 +57,7 @@ class HomeViewModelUseCaseTest {
             Photo(id = 3, albumId = 2, title = "Photo 3", url = "url3", thumbnailUrl = "thumb3")
         )
 
-        whenever(getAlbumsUseCase.invoke()).thenReturn(flow {
+        whenever(getAlbumsUseCase.invoke(eq(5), eq(0))).thenReturn(flow {
             emit(Result.success(listOf(album1, album2)))
         })
         whenever(getPhotosUseCase.invoke(1)).thenReturn(flow {
@@ -85,7 +87,7 @@ class HomeViewModelUseCaseTest {
     fun `loading fails when use case returns error`() = runTest {
         val testException = Exception("Network error")
 
-        whenever(getAlbumsUseCase.invoke()).thenReturn(flow {
+        whenever(getAlbumsUseCase.invoke(eq(5), eq(0))).thenReturn(flow {
             emit(Result.failure(testException))
         })
 

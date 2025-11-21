@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class HomeRepositoryImpl(private val apiService: ApiService) : HomeRepository {
-    override fun getAlbums(): Flow<Result<List<Album>>> = flow {
+    override fun getAlbums(limit: Int, start: Int): Flow<Result<List<Album>>> = flow {
         try {
-            val dtos = apiService.getAlbums()
+            val dtos = apiService.getAlbums(limit = limit, start = start)
             val albums = DataMapper.albumDtosToDomain(dtos)
             emit(Result.success(albums))
         } catch (e: Exception) {

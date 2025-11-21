@@ -23,6 +23,7 @@ fun HomeScreen(
             albumsWithPhotos = uiState.albumsWithPhotos,
             isLoadingMore = uiState.isLoadingMore,
             loadingPhotoIds = uiState.loadingPhotoIds,
+            hasMoreData = uiState.hasMoreData,
             onPhotoClick = onPhotoClick,
             onLoadMoreRequested = { viewModel.loadNextPage() },
             onPhotoLoadRequested = { albumId -> viewModel.loadPhotosForAlbum(albumId) },
