@@ -142,21 +142,17 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updatePhotosForAlbum(albumId: Int, newPhotos: List<Photo>) {
-        // Append new photos to existing cache
         val currentPhotos = photoCache.getOrDefault(albumId, emptyList())
         val allPhotos = currentPhotos + newPhotos
         photoCache[albumId] = allPhotos
 
-        // Update album's photos in UI state
-        val updatedAlbums = _uiState.value.albumsWithPhotos.map { albumWithPhotos ->
-            if (albumWithPhotos.album.id == albumId) {
-                albumWithPhotos.copy(photos = allPhotos)
-            } else {
-                albumWithPhotos
-            }
+        val currentAlbums = _uiState.value.albumsWithPhotos.toMutableList()
+        val albumIndex = currentAlbums.indexOfFirst { it.album.id == albumId }
+        
+        if (albumIndex >= 0) {
+            currentAlbums[albumIndex] = currentAlbums[albumIndex].copy(photos = allPhotos)
+            _uiState.value = _uiState.value.copy(albumsWithPhotos = currentAlbums)
         }
-
-        _uiState.value = _uiState.value.copy(albumsWithPhotos = updatedAlbums)
     }
 
     private fun updateLoadingPhotoIds(albumId: Int, isLoading: Boolean) {

@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import com.example.mobilechallenge.ui.theme.Secondary
@@ -41,7 +42,10 @@ fun PhotoCard(
             .clickable { onPhotoClick(photo) }
     ) {
         AsyncImage(
-            model = photo.thumbnailUrl,
+            model = ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current)
+                .data(photo.thumbnailUrl)
+                .crossfade(true)
+                .build(),
             contentDescription = photo.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
