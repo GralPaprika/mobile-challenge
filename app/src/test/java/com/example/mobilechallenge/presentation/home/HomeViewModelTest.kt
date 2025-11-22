@@ -34,6 +34,10 @@ class HomeViewModelTest {
         getAlbumsUseCase = mock()
         getPhotosUseCase = mock()
         networkMonitor = mock()
+        // Mock the network connectivity monitor to always return connected = true
+        whenever(networkMonitor.observeConnectivityChanges()).thenReturn(
+            flow { emit(true) }
+        )
     }
 
     @Test

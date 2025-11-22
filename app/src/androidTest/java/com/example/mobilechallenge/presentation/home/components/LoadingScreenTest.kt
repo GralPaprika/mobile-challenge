@@ -1,7 +1,6 @@
 package com.example.mobilechallenge.presentation.home.components
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.printToLog
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme

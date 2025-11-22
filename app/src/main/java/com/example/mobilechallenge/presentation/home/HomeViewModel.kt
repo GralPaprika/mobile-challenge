@@ -157,7 +157,7 @@ open class HomeViewModel @Inject constructor(
                     paginationState.isLoadingMorePhotos = false
                     updateLoadingPhotoIds(albumId, isLoading = false)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 paginationState.isLoadingMorePhotos = false
                 updateLoadingPhotoIds(albumId, isLoading = false)
             }
