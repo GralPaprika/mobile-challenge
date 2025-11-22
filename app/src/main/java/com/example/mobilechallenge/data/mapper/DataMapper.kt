@@ -20,7 +20,7 @@ object DataMapper {
             albumId = dto.albumId,
             title = dto.title,
             url = dto.url,
-            thumbnailUrl = dto.thumbnailUrl,
+            thumbnailUrl = "https://picsum.photos/300/200",
         )
     }
 

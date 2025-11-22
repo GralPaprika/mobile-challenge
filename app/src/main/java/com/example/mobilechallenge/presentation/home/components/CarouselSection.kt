@@ -22,11 +22,11 @@ import com.example.mobilechallenge.ui.theme.Accent
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-// Load more carousel photos when within 2 items of end
-private const val CAROUSEL_SCROLL_TRIGGER = 2
+// Load more carousel photos when within 3 items of end
+private const val CAROUSEL_SCROLL_TRIGGER = 3
 
-// Show 2 skeleton cards during carousel pagination
-private const val SKELETON_CAROUSEL_PAGINATION_COUNT = 2
+// Show 3 skeleton cards during carousel pagination
+private const val SKELETON_CAROUSEL_PAGINATION_COUNT = 3
 
 @Composable
 fun CarouselSection(

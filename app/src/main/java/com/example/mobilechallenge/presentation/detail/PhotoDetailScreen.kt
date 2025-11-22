@@ -43,7 +43,7 @@ import com.example.mobilechallenge.ui.theme.Secondary
 @Composable
 fun PhotoDetailScreen(
     photoId: Int,
-    photoUrl: String,
+    photoThumbnailUrl: String,
     photoTitle: String,
     onBackClick: () -> Unit,
     viewModel: PhotoDetailViewModel = hiltViewModel(),
@@ -59,7 +59,7 @@ fun PhotoDetailScreen(
     }
     
     PhotoDetailScreenContent(
-        photoUrl = photoUrl,
+        photoUrl = photoThumbnailUrl,
         photoTitle = photoTitle,
         photoDescription = description.value,
         isLoadingDescription = isLoadingDescription.value,
