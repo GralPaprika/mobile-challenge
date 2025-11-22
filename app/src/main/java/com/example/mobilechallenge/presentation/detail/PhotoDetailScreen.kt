@@ -49,10 +49,12 @@ fun PhotoDetailScreen(
     viewModel: PhotoDetailViewModel = hiltViewModel(),
 ) {
     val description = remember { mutableStateOf("") }
+    val isLoadingDescription = remember { mutableStateOf(true) }
 
     LaunchedEffect(photoId) {
         viewModel.getPhotoDescription().collect { result ->
-            description.value = result.getOrNull() ?: "Unable to load description"
+            isLoadingDescription.value = false
+            description.value = result.getOrNull() ?: ""
         }
     }
     
@@ -60,6 +62,7 @@ fun PhotoDetailScreen(
         photoUrl = photoUrl,
         photoTitle = photoTitle,
         photoDescription = description.value,
+        isLoadingDescription = isLoadingDescription.value,
         onBackClick = onBackClick,
     )
 }
@@ -70,6 +73,7 @@ fun PhotoDetailScreenContent(
     photoUrl: String,
     photoTitle: String,
     photoDescription: String,
+    isLoadingDescription: Boolean = false,
     onBackClick: () -> Unit,
 ) {
     Scaffold(
@@ -129,13 +133,25 @@ fun PhotoDetailScreenContent(
             }
 
             Text(
-                text = photoDescription,
+                text = "Description",
                 color = Accent,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
+
+            if (isLoadingDescription) {
+                SkeletonDescriptionCard()
+            } else {
+                Text(
+                    text = photoDescription,
+                    color = Accent,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+            }
         }
     }
 }
@@ -148,6 +164,7 @@ fun PhotoDetailScreenPreview() {
             photoUrl = "https://via.placeholder.com/600",
             photoTitle = "Sample Photo Title",
             photoDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            isLoadingDescription = false,
             onBackClick = {}
         )
     }
