@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.activity.compose.BackHandler
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
@@ -62,9 +63,15 @@ fun PhotoDetailScreen(
         }
     }
 
+    // Intercept back press when video player is showing
+    BackHandler(enabled = showVideoPlayer.value) {
+        showVideoPlayer.value = false
+    }
+
     if (showVideoPlayer.value) {
         FullScreenVideoPlayer(
             videoUrl = photoUrl,
+            onClose = { showVideoPlayer.value = false }
         )
     } else {
         PhotoDetailScreenContent(
