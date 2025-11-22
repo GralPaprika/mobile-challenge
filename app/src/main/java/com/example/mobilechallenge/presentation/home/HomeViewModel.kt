@@ -28,7 +28,7 @@ data class HomeUiState(
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+open class HomeViewModel @Inject constructor(
     private val getAlbumsUseCase: GetAlbumsUseCase,
     private val getPhotosUseCase: GetPhotosUseCase,
     private val networkConnectivityMonitor: NetworkConnectivityMonitor
@@ -83,7 +83,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadAlbumsNextPage() {
+    open fun loadAlbumsNextPage() {
         if (_uiState.value.isLoadingMore || !_uiState.value.hasMoreData) return
 
         viewModelScope.launch {
@@ -130,7 +130,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadPhotosForAlbum(albumId: Int) {
+    open fun loadPhotosForAlbum(albumId: Int) {
         val paginationState = photoPaginationState.getOrPut(albumId) { PhotoPaginationState() }
         
         // Prevent loading if already loading or if we've reached the end

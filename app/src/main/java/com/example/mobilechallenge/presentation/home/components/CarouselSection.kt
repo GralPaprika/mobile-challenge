@@ -65,7 +65,7 @@ fun CarouselSection(
         Text(
             text = title,
             color = Accent,
-            fontSize = 36.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp),
         )

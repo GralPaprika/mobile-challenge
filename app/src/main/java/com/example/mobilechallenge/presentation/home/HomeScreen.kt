@@ -13,9 +13,9 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 
 @Composable
 fun HomeScreen(
-    onPhotoClick: (Photo) -> Unit
+    onPhotoClick: (Photo) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState().value
 
     when {

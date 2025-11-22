@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.testTag
 import com.example.mobilechallenge.R
 import com.example.mobilechallenge.ui.theme.Accent
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
@@ -41,6 +42,7 @@ fun NoConnectionScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .size(64.dp)
+                    .testTag("wifi_off_icon")
             )
             
             Text(

@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class PhotoDetailViewModel @Inject constructor(
+open class PhotoDetailViewModel @Inject constructor(
     private val getPhotoDescriptionUseCase: GetPhotoDescriptionUseCase
 ) : ViewModel() {
 
-    fun getPhotoDescription(): Flow<Result<String>> {
+    open fun getPhotoDescription(): Flow<Result<String>> {
         return getPhotoDescriptionUseCase.invoke()
     }
 }

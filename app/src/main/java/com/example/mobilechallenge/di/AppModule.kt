@@ -4,6 +4,8 @@ import com.example.mobilechallenge.BuildConfig
 import com.example.mobilechallenge.data.remote.ApiService
 import com.example.mobilechallenge.data.remote.LoremApiService
 import com.example.mobilechallenge.data.repository.HomeRepositoryImpl
+import com.example.mobilechallenge.data.repository.PhotoDetailsRepository
+import com.example.mobilechallenge.data.repository.PhotoDetailsRepositoryImpl
 import com.example.mobilechallenge.domain.repository.HomeRepository
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCaseImpl
@@ -88,6 +90,12 @@ object RepositoryModule {
     fun provideHomeRepository(apiService: ApiService): HomeRepository {
         return HomeRepositoryImpl(apiService)
     }
+
+    @Provides
+    @Singleton
+    fun providePhotoDetailsRepository(loremApiService: LoremApiService): PhotoDetailsRepository {
+        return PhotoDetailsRepositoryImpl(loremApiService)
+    }
 }
 
 @Module
@@ -107,7 +115,7 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetPhotoDescriptionUseCase(loremApiService: LoremApiService): GetPhotoDescriptionUseCase {
-        return GetPhotoDescriptionUseCaseImpl(loremApiService)
+    fun provideGetPhotoDescriptionUseCase(photoDetailsRepository: PhotoDetailsRepository): GetPhotoDescriptionUseCase {
+        return GetPhotoDescriptionUseCaseImpl(photoDetailsRepository)
     }
 }

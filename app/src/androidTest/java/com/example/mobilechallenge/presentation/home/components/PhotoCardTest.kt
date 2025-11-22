@@ -42,7 +42,6 @@ class PhotoCardTest {
             }
         }
 
-        // Verify the text exists (even if truncated to 20 chars)
         composeTestRule.onNodeWithText("This is a very long ").assertExists()
     }
 

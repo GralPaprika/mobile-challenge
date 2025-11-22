@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.example.mobilechallenge.domain.model.Album
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
+import com.example.mobilechallenge.util.NetworkConnectivityMonitor
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -25,12 +26,14 @@ class HomeViewModelTest {
 
     private lateinit var getAlbumsUseCase: GetAlbumsUseCase
     private lateinit var getPhotosUseCase: GetPhotosUseCase
+    private lateinit var networkMonitor: NetworkConnectivityMonitor
     private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setUp() {
         getAlbumsUseCase = mock()
         getPhotosUseCase = mock()
+        networkMonitor = mock()
     }
 
     @Test
@@ -38,7 +41,7 @@ class HomeViewModelTest {
         // Setup mock to never emit
         whenever(getAlbumsUseCase.invoke(any(), any())).thenReturn(flow {})
 
-        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
+        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase, networkMonitor)
 
         assertTrue(viewModel.uiState.value.isLoading)
         assertEquals(emptyList(), viewModel.uiState.value.albumsWithPhotos)
@@ -63,7 +66,7 @@ class HomeViewModelTest {
         }
         getPhotosUseCase = mock()
 
-        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
+        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase, networkMonitor)
 
         viewModel.uiState.test {
             // Skip initial "isLoading=true" state from init
@@ -87,7 +90,7 @@ class HomeViewModelTest {
             flow { emit(Result.success(firstPageAlbums)) }
         )
 
-        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
+        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase, networkMonitor)
 
         viewModel.uiState.test {
             skipItems(1)
@@ -115,7 +118,7 @@ class HomeViewModelTest {
         }
         getPhotosUseCase = mock()
 
-        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
+        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase, networkMonitor)
 
         viewModel.uiState.test {
             // Skip initial "isLoading=true" state from init
@@ -155,7 +158,7 @@ class HomeViewModelTest {
         }
         getPhotosUseCase = mock()
 
-        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase)
+        viewModel = HomeViewModel(getAlbumsUseCase, getPhotosUseCase, networkMonitor)
 
         viewModel.uiState.test {
             // Skip initial "isLoading=true" state

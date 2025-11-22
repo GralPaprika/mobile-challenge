@@ -19,6 +19,7 @@ media3 = "1.8.0"
 turbine = "1.2.1"
 mockitoCore = "5.20.0"
 mockitoKotlin = "6.1.0"
+mockitoAndroid = "5.20.0"
 archCore = "2.2.0"
 
 [libraries]
@@ -53,6 +54,7 @@ media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "medi
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+mockito-android = { group = "org.mockito", name = "mockito-android", version.ref = "mockitoAndroid" }
 arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.10.2" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }

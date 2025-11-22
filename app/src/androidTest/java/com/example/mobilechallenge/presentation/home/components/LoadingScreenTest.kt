@@ -21,7 +21,6 @@ class LoadingScreenTest {
             }
         }
 
-        // Just verify the composable renders without crashing
         composeTestRule.onRoot().printToLog("LoadingScreen")
     }
 }
