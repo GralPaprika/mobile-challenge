@@ -25,9 +25,9 @@ fun AppNavHost(
                 onPhotoClick = { photo ->
                     navController.navigate(
                         NavigationRoutes.PhotoDetail(
-                            photoId = photo.id,
-                            photoUrl = photo.url,
-                            photoTitle = photo.title
+                            id = photo.id,
+                            url = photo.url,
+                            title = photo.title,
                         )
                     )
                 }
@@ -38,9 +38,9 @@ fun AppNavHost(
             val photoDetail = backStackEntry.toRoute<NavigationRoutes.PhotoDetail>()
             
             PhotoDetailScreen(
-                photoId = photoDetail.photoId,
-                photoUrl = photoDetail.photoUrl,
-                photoTitle = photoDetail.photoTitle,
+                photoId = photoDetail.id,
+                photoUrl = photoDetail.url,
+                photoTitle = photoDetail.title,
                 onBackClick = { navController.popBackStack() }
             )
         }
