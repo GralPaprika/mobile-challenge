@@ -1,6 +1,7 @@
 package com.example.mobilechallenge.presentation.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +42,8 @@ import com.example.mobilechallenge.ui.theme.Accent
 import com.example.mobilechallenge.ui.theme.Primary
 import com.example.mobilechallenge.ui.theme.Secondary
 
+private const val VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+
 @Composable
 fun PhotoDetailScreen(
     photoId: Int,
@@ -50,6 +54,7 @@ fun PhotoDetailScreen(
 ) {
     val description = remember { mutableStateOf("") }
     val isLoadingDescription = remember { mutableStateOf(true) }
+    val showVideoPlayer = remember { mutableStateOf(false) }
 
     LaunchedEffect(photoId) {
         viewModel.getPhotoDescription().collect { result ->
@@ -57,14 +62,22 @@ fun PhotoDetailScreen(
             description.value = result.getOrNull() ?: ""
         }
     }
-    
-    PhotoDetailScreenContent(
-        photoUrl = photoThumbnailUrl,
-        photoTitle = photoTitle,
-        photoDescription = description.value,
-        isLoadingDescription = isLoadingDescription.value,
-        onBackClick = onBackClick,
-    )
+
+    if (showVideoPlayer.value) {
+        FullScreenVideoPlayer(
+            videoUrl = VIDEO_URL,
+            onBackClick = { showVideoPlayer.value = false }
+        )
+    } else {
+        PhotoDetailScreenContent(
+            photoUrl = photoThumbnailUrl,
+            photoTitle = photoTitle,
+            photoDescription = description.value,
+            isLoadingDescription = isLoadingDescription.value,
+            onBackClick = onBackClick,
+            onImageClick = { showVideoPlayer.value = true }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,6 +88,7 @@ fun PhotoDetailScreenContent(
     photoDescription: String,
     isLoadingDescription: Boolean = false,
     onBackClick: () -> Unit,
+    onImageClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -120,6 +134,8 @@ fun PhotoDetailScreenContent(
                     .padding(bottom = 16.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(Secondary)
+                    .clickable { onImageClick() },
+                contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -129,6 +145,19 @@ fun PhotoDetailScreenContent(
                     contentDescription = photoTitle,
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Fit
+                )
+                
+                // Play icon overlay
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "Play video",
+                    tint = Accent.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .background(
+                            color = Primary.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(12.dp)
                 )
             }
 
@@ -165,7 +194,8 @@ fun PhotoDetailScreenPreview() {
             photoTitle = "Sample Photo Title",
             photoDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             isLoadingDescription = false,
-            onBackClick = {}
+            onBackClick = {},
+            onImageClick = {}
         )
     }
 }
