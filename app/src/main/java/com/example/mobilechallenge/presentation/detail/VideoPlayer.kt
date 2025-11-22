@@ -19,7 +19,6 @@ import androidx.media3.ui.PlayerView
 @Composable
 fun FullScreenVideoPlayer(
     videoUrl: String,
-    onBackClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val exoPlayer = remember {

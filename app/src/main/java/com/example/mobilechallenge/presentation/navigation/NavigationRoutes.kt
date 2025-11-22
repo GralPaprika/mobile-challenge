@@ -10,7 +10,8 @@ sealed class NavigationRoutes {
     @Serializable
     data class PhotoDetail(
         val id: Int = 0,
-        val thumbnailUrl: String,
+        val url: String,
         val title: String,
+        val thumbnailUrl: String,
     ) : NavigationRoutes()
 }

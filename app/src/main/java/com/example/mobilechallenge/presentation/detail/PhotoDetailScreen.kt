@@ -42,11 +42,10 @@ import com.example.mobilechallenge.ui.theme.Accent
 import com.example.mobilechallenge.ui.theme.Primary
 import com.example.mobilechallenge.ui.theme.Secondary
 
-private const val VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-
 @Composable
 fun PhotoDetailScreen(
     photoId: Int,
+    photoUrl: String,
     photoThumbnailUrl: String,
     photoTitle: String,
     onBackClick: () -> Unit,
@@ -65,8 +64,7 @@ fun PhotoDetailScreen(
 
     if (showVideoPlayer.value) {
         FullScreenVideoPlayer(
-            videoUrl = VIDEO_URL,
-            onBackClick = { showVideoPlayer.value = false }
+            videoUrl = photoUrl,
         )
     } else {
         PhotoDetailScreenContent(

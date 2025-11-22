@@ -19,7 +19,7 @@ object DataMapper {
             id = dto.id,
             albumId = dto.albumId,
             title = dto.title,
-            url = dto.url,
+            url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
             thumbnailUrl = "https://picsum.photos/300/200",
         )
     }

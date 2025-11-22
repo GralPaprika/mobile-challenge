@@ -26,8 +26,9 @@ fun AppNavHost(
                     navController.navigate(
                         NavigationRoutes.PhotoDetail(
                             id = photo.id,
-                            thumbnailUrl = photo.thumbnailUrl,
+                            url = photo.url,
                             title = photo.title,
+                            thumbnailUrl = photo.thumbnailUrl,
                         )
                     )
                 }
@@ -39,6 +40,7 @@ fun AppNavHost(
             
             PhotoDetailScreen(
                 photoId = photoDetail.id,
+                photoUrl = photoDetail.url,
                 photoThumbnailUrl = photoDetail.thumbnailUrl,
                 photoTitle = photoDetail.title,
                 onBackClick = { navController.popBackStack() }
