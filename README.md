@@ -2,6 +2,8 @@
 
 Aplicación Android que muestra un álbum de fotos con scroll infinito, descripción y reproducción de videos.
 
+![Demo](Screen_recording_20251122_092827.gif)
+
 ## Instalación
 
 1. Abrir el proyecto en Android Studio
