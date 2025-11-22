@@ -4,9 +4,9 @@ import com.example.mobilechallenge.BuildConfig
 import com.example.mobilechallenge.data.remote.ApiService
 import com.example.mobilechallenge.data.remote.LoremApiService
 import com.example.mobilechallenge.data.repository.HomeRepositoryImpl
-import com.example.mobilechallenge.data.repository.PhotoDetailsRepository
 import com.example.mobilechallenge.data.repository.PhotoDetailsRepositoryImpl
 import com.example.mobilechallenge.domain.repository.HomeRepository
+import com.example.mobilechallenge.domain.repository.PhotoDetailsRepository
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCaseImpl
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase

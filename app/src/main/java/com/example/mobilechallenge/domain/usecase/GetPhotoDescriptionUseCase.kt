@@ -1,6 +1,6 @@
 package com.example.mobilechallenge.domain.usecase
 
-import com.example.mobilechallenge.data.repository.PhotoDetailsRepository
+import com.example.mobilechallenge.domain.repository.PhotoDetailsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -9,12 +9,5 @@ interface GetPhotoDescriptionUseCase {
 }
 
 class GetPhotoDescriptionUseCaseImpl(private val photoDetailsRepository: PhotoDetailsRepository) : GetPhotoDescriptionUseCase {
-    override fun invoke(): Flow<Result<String>> = flow {
-        try {
-            val response = photoDetailsRepository.getPhotoDescription()
-            emit(Result.success(response))
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
-    }
+    override fun invoke(): Flow<Result<String>> = photoDetailsRepository.getPhotoDescription()
 }
