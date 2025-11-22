@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.performClick
 import com.example.mobilechallenge.domain.usecase.GetPhotoDescriptionUseCase
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
@@ -21,12 +22,12 @@ class PhotoDetailScreenTest {
 
     @Before
     fun setUp() {
-        val mockUseCase = mock<GetPhotoDescriptionUseCase>()
+        mock<GetPhotoDescriptionUseCase>()
         mockViewModel = mock<PhotoDetailViewModel>()
     }
 
     @Test
-    fun `photoDetailScreen_displaysPhotoTitle`() {
+    fun photoDetailScreen_displaysPhotoTitle() {
         whenever(mockViewModel.getPhotoDescription()).thenReturn(
             flowOf(Result.success("Test Description"))
         )
@@ -46,7 +47,7 @@ class PhotoDetailScreenTest {
     }
 
     @Test
-    fun `photoDetailScreen_displaysDescriptionHeader`() {
+    fun photoDetailScreen_displaysDescriptionHeader() {
         whenever(mockViewModel.getPhotoDescription()).thenReturn(
             flowOf(Result.success("Test Description"))
         )
@@ -66,7 +67,7 @@ class PhotoDetailScreenTest {
     }
 
     @Test
-    fun `photoDetailScreen_loadsDescription`() {
+    fun photoDetailScreen_loadsDescription() {
         val testDescription = "This is a detailed description"
         whenever(mockViewModel.getPhotoDescription()).thenReturn(
             flowOf(Result.success(testDescription))
@@ -87,7 +88,7 @@ class PhotoDetailScreenTest {
     }
 
     @Test
-    fun `photoDetailScreen_callsOnBackClickWhenBackPressed`() {
+    fun photoDetailScreen_callsOnBackClickWhenBackPressed() {
         var backClicked = false
         whenever(mockViewModel.getPhotoDescription()).thenReturn(
             flowOf(Result.success(""))
