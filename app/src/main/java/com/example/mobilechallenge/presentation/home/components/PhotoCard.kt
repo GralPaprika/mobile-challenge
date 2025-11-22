@@ -34,7 +34,7 @@ fun PhotoCard(
 ) {
     Box(
         modifier = modifier
-            .width(180.dp)
+            .width(270.dp)
             .height(180.dp)
             .padding(end = 12.dp)
             .clip(RoundedCornerShape(12.dp))

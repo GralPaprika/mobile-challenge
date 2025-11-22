@@ -8,6 +8,7 @@ import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.components.ErrorScreen
 import com.example.mobilechallenge.presentation.home.components.LoadingScreen
 import com.example.mobilechallenge.presentation.home.components.HomeScreenContent
+import com.example.mobilechallenge.presentation.home.components.NoConnectionScreen
 import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 
 @Composable
@@ -19,6 +20,7 @@ fun HomeScreen(
 
     when {
         uiState.isLoading -> LoadingScreen()
+        uiState.isNetworkError -> NoConnectionScreen()
         uiState.error != null -> ErrorScreen(uiState.error)
         else -> HomeScreenContent(
             albumsWithPhotos = uiState.albumsWithPhotos,

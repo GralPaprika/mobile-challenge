@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,9 +27,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 // Load more carousel photos when within 3 items of end
 private const val CAROUSEL_SCROLL_TRIGGER = 3
 
-// Show 3 skeleton cards during carousel pagination
-private const val SKELETON_CAROUSEL_PAGINATION_COUNT = 3
-
 @Composable
 fun CarouselSection(
     modifier: Modifier = Modifier,
@@ -38,12 +37,16 @@ fun CarouselSection(
     isLoadingMorePhotos: Boolean = false,
 ) {
     val listState = rememberLazyListState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    // Show more skeleton cards in landscape mode to fill the space
+    val skeletonCarouselPaginationCount = if (isLandscape) 5 else 3
 
     // Detect when user scrolls near the end of carousel
     LaunchedEffect(listState, isLoadingMorePhotos, photos.size) {
         snapshotFlow {
             val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-            val totalItems = photos.size + if (isLoadingMorePhotos) SKELETON_CAROUSEL_PAGINATION_COUNT else 0 // Account for skeleton items
+            val totalItems = photos.size + if (isLoadingMorePhotos) skeletonCarouselPaginationCount else 0 // Account for skeleton items
             lastVisibleIndex to totalItems
         }
             .distinctUntilChanged()
@@ -57,13 +60,13 @@ fun CarouselSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 24.dp)
             .testTag("carousel_section")
     ) {
         Text(
             text = title,
             color = Accent,
-            fontSize = 20.sp,
+            fontSize = 36.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp),
         )
@@ -79,7 +82,7 @@ fun CarouselSection(
             
             // Show skeleton cards while loading
             if (isLoadingMorePhotos) {
-                items(SKELETON_CAROUSEL_PAGINATION_COUNT) {
+                items(skeletonCarouselPaginationCount) {
                     SkeletonPhotoCard()
                 }
             }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,10 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 
 @Composable
 fun SkeletonAlbumCard(modifier: Modifier = Modifier) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+    val skeletonCount = if (isLandscape) 5 else 3
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -35,7 +40,7 @@ fun SkeletonAlbumCard(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Row {
-            repeat(3) {
+            repeat(skeletonCount) {
                 SkeletonPhotoCard()
             }
         }

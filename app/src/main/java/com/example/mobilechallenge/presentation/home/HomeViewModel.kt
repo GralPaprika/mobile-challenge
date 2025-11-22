@@ -9,6 +9,7 @@ import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.domain.usecase.GetAlbumsUseCase
 import com.example.mobilechallenge.domain.usecase.GetPhotosUseCase
 import com.example.mobilechallenge.presentation.home.model.AlbumWithPhotos
+import com.example.mobilechallenge.util.NetworkConnectivityMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,13 +23,15 @@ data class HomeUiState(
     val isLoadingMore: Boolean = false,
     val loadingPhotoIds: Set<Int> = emptySet(),
     val error: String? = null,
-    val hasMoreData: Boolean = true
+    val hasMoreData: Boolean = true,
+    val isNetworkError: Boolean = false
 )
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAlbumsUseCase: GetAlbumsUseCase,
-    private val getPhotosUseCase: GetPhotosUseCase
+    private val getPhotosUseCase: GetPhotosUseCase,
+    private val networkConnectivityMonitor: NetworkConnectivityMonitor
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
@@ -45,6 +48,22 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadInitialData()
+        observeConnectivityChanges()
+    }
+
+    private fun observeConnectivityChanges() {
+        viewModelScope.launch {
+            networkConnectivityMonitor.observeConnectivityChanges().collect { isConnected ->
+                if (!isConnected) {
+                    _uiState.value = _uiState.value.copy(isNetworkError = true)
+                } else {
+                    // Only clear the network error if there's no other error
+                    if (_uiState.value.error == null) {
+                        _uiState.value = _uiState.value.copy(isNetworkError = false)
+                    }
+                }
+            }
+        }
     }
 
     private fun loadInitialData() {
@@ -53,10 +72,12 @@ class HomeViewModel @Inject constructor(
                 currentPage = 0
                 loadAlbumsNextPage()
             } catch (e: Exception) {
+                val isNetworkError = isNetworkException(e)
                 _uiState.value = HomeUiState(
                     isLoading = false,
                     albumsWithPhotos = emptyList(),
                     error = e.message,
+                    isNetworkError = isNetworkError
                 )
             }
         }
@@ -99,9 +120,11 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                val isNetworkError = isNetworkException(e)
                 _uiState.value = _uiState.value.copy(
                     isLoadingMore = false,
-                    error = e.message
+                    error = e.message,
+                    isNetworkError = isNetworkError
                 )
             }
         }
@@ -162,5 +185,20 @@ class HomeViewModel @Inject constructor(
             _uiState.value.loadingPhotoIds - albumId
         }
         _uiState.value = _uiState.value.copy(loadingPhotoIds = updatedLoadingIds)
+    }
+
+    private fun isNetworkException(exception: Exception): Boolean {
+        return exception is java.net.SocketException ||
+                exception is java.net.SocketTimeoutException ||
+                exception is java.io.IOException ||
+                exception.cause is java.net.SocketException ||
+                exception.cause is java.net.SocketTimeoutException ||
+                exception.cause is java.io.IOException ||
+                exception.message?.contains("Unable to resolve host", ignoreCase = true) == true ||
+                exception.message?.contains("Connection refused", ignoreCase = true) == true ||
+                exception.message?.contains("No address associated", ignoreCase = true) == true ||
+                exception.message?.contains("Network is unreachable", ignoreCase = true) == true ||
+                exception.message?.contains("Connection reset", ignoreCase = true) == true ||
+                exception.message?.contains("timeout", ignoreCase = true) == true
     }
 }
