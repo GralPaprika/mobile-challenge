@@ -16,6 +16,7 @@
         android:theme="@style/Theme.MobileChallenge">
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"
             android:exported="true"
             android:theme="@style/Theme.MobileChallenge">
             <intent-filter>
