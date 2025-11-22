@@ -1,14 +1,12 @@
 package com.example.mobilechallenge.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.mobilechallenge.presentation.detail.PhotoDetailScreen
 import com.example.mobilechallenge.presentation.home.HomeScreen
-import com.example.mobilechallenge.presentation.home.HomeViewModel
 
 @Composable
 fun AppNavHost(
