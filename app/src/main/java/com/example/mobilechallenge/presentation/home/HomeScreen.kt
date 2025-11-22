@@ -3,6 +3,7 @@ package com.example.mobilechallenge.presentation.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mobilechallenge.domain.model.Photo
 import com.example.mobilechallenge.presentation.home.components.ErrorScreen
 import com.example.mobilechallenge.presentation.home.components.LoadingScreen
@@ -11,9 +12,9 @@ import com.example.mobilechallenge.ui.theme.MobileChallengeTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
     onPhotoClick: (Photo) -> Unit
 ) {
+    val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsState().value
 
     when {

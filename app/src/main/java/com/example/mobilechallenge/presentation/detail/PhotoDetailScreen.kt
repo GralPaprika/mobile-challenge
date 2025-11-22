@@ -49,11 +49,11 @@ fun PhotoDetailScreen(
     photoThumbnailUrl: String,
     photoTitle: String,
     onBackClick: () -> Unit,
-    viewModel: PhotoDetailViewModel = hiltViewModel(),
 ) {
     val description = remember { mutableStateOf("") }
     val isLoadingDescription = remember { mutableStateOf(true) }
     val showVideoPlayer = remember { mutableStateOf(false) }
+    val viewModel: PhotoDetailViewModel = hiltViewModel()
 
     LaunchedEffect(photoId) {
         viewModel.getPhotoDescription().collect { result ->
@@ -145,7 +145,6 @@ fun PhotoDetailScreenContent(
                     contentScale = ContentScale.Fit
                 )
                 
-                // Play icon overlay
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Play video",

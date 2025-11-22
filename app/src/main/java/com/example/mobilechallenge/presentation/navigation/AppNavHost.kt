@@ -19,9 +19,7 @@ fun AppNavHost(
         startDestination = NavigationRoutes.Home
     ) {
         composable<NavigationRoutes.Home> {
-            val homeViewModel: HomeViewModel = hiltViewModel()
             HomeScreen(
-                viewModel = homeViewModel,
                 onPhotoClick = { photo ->
                     navController.navigate(
                         NavigationRoutes.PhotoDetail(
